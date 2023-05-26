@@ -16,7 +16,7 @@
 
 <body>
     <script src="https://threejs.org/build/three.js"></script>
-    <script src="https://threejs.org/examples/js/loaders/PLYLoader.js"></script> <!-- Include PLYLoader script -->
+    <script src="path/to/PLYLoader.js"></script> <!-- Update the path to PLYLoader.js -->
 
     <script>
         var scene = new THREE.Scene();
@@ -30,7 +30,7 @@
         var loader = new THREE.PLYLoader();
 
         // Load the .ply file
-        loader.load('/object.ply', function (geometry) {
+        loader.load('path/to/your/file.ply', function (geometry) {
             var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
             var mesh = new THREE.Mesh(geometry, material);
             scene.add(mesh);
