@@ -16,38 +16,51 @@
 
 <body>
     <script src="https://threejs.org/build/three.js"></script>
-    <script src="path/to/PLYLoader.js"></script> <!-- Update the path to PLYLoader.js -->
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/PLYLoader.js"></script>
 
-    <script>
-        var scene = new THREE.Scene();
-        var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+<script>
+    var scene = new THREE.Scene();
+    var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
-        var renderer = new THREE.WebGLRenderer();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        document.body.appendChild(renderer.domElement);
+    var renderer = new THREE.WebGLRenderer();
+        renderer.setClearColor(0x000000, 0);
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
 
-        // Create a PLYLoader instance
-        var loader = new THREE.PLYLoader();
+    // Create a PLYLoader instance
+    var loader = new THREE.PLYLoader();
 
-        // Load the .ply file
-        loader.load('path/to/your/file.ply', function (geometry) {
-            var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-            var mesh = new THREE.Mesh(geometry, material);
-            scene.add(mesh);
+    var mesh; // Declare the mesh variable outside the loader's callback function
+
+    // Load the .ply file
+    loader.load('object.ply', function (geometry) {
+         // Define a custom material for coloring the mesh
+        var material = new THREE.MeshPhongMaterial({
+            color: 0x00ff00, // Set the base color of the mesh
+            specular: 0x111111, // Set the specular highlight color
+            shininess: 200 // Set the shininess value (higher value results in a more focused specular highlight)
         });
 
-        camera.position.z = 5;
+        mesh = new THREE.Mesh(geometry, material); // Assign the loaded mesh to the outer variable
+        scene.add(mesh);
 
-        function animate() {
-            requestAnimationFrame(animate);
-            if (mesh) { // Check if the mesh has been loaded
-                mesh.rotation.x += 0.01;
-                mesh.rotation.y += 0.01;
+        // Automatically adjust camera position to fit the loaded mesh
+        var box = new THREE.Box3().setFromObject(mesh);
+        var boxSize = box.getSize(new THREE.Vector3()).length();
+        var boxCenter = box.getCenter(new THREE.Vector3());
+        camera.position.copy(boxCenter);
+        camera.position.z += boxSize; // Adjust zoom level based on the size of the mesh
+        camera.lookAt(boxCenter);
+    });
+
+            function animate() {
+                requestAnimationFrame(animate);
+                if (mesh) { // Check if the mesh has been loaded
+                    mesh.rotation.x += 0.01;
+                    mesh.rotation.y += 0.01;
+                }
+                renderer.render(scene, camera);
             }
-            renderer.render(scene, camera);
-        }
-        animate();
-    </script>
-</body>
-
-</html>
+            animate();
+        </script>
+    </body>
